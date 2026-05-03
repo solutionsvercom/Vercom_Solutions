@@ -54,4 +54,32 @@ Use these so **one** Node app serves the **React site** (`/`) and **API** (`/api
 In **`backend/.env`** on the server set **`NODE_ENV=production`**, **`CLIENT_URL=https://vercomsolutions.in`** (match your live URL, including `https://`), **`MONGODB_URI`**, and **`ADMIN_SECRET`**.
 
 The server detects **Phusion Passenger** and calls **`app.listen('passenger')`** automatically; locally it still uses **`PORT`** / **`HOST`** as before.
+
+## GitHub (replace an old repo with this project)
+
+`backend/.env`, `node_modules`, and `frontend/dist` are **not** committed (see `.gitignore`). Secrets stay on your machine and server only.
+
+1. On GitHub, open your existing Vercom repository and copy its URL (HTTPS or SSH), e.g. `https://github.com/YOUR_USER/vercom-solutions.git`.
+
+2. In this folder on your PC:
+
+   ```bash
+   git remote add origin https://github.com/YOUR_USER/vercom-solutions.git
+   ```
+
+   If `origin` already exists from an old setup: `git remote remove origin` then add again.
+
+3. Push this codebase as **`main`** (already the default branch here):
+
+   ```bash
+   git push -u origin main
+   ```
+
+   If the GitHub repo already has commits (e.g. old site) and Git rejects the push, either merge the histories or **overwrite** the remote (destructive — backs up nothing on GitHub):
+
+   ```bash
+   git push -u origin main --force
+   ```
+
+   Use `--force` only if you intend to replace all remote history with this project.
   
