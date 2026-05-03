@@ -31,9 +31,9 @@ This project is converted from a Figma AI-generated frontend into a full MERN st
 2. Install dependencies: `npm install` (from the **repository root**).
 3. Build the SPA: `npm run build` — output is **`frontend/dist/`** (ignored by git; do not commit `node_modules` or `.env`).
 4. Configure **`backend/.env`** (copy from `backend/.env.example`):
-   - `MONGODB_URI`, `ADMIN_SECRET`
+   - `MONGODB_URI`, `ADMIN_SECRET`, `JWT_SECRET`
    - `NODE_ENV=production`
-   - `CLIENT_URL=https://your-domain.com` (your live site; comma-separate multiple origins if needed)
+   - `CLIENT_URL=https://vercomsolutions.in` (add `,https://www.vercomsolutions.in` if you use `www`)
 5. Start the API + static site: `npm start` (runs `node backend/src/server.js`). With `NODE_ENV=production`, Express serves **`frontend/dist`** and all **`/api/*`** routes on the same port, so the React app can call `/api/...` without CORS issues.
 6. Point your reverse proxy (Apache/Nginx in WHM) at that Node process port (e.g. `5000`), or use **Application Manager / Passenger** with `npm start` and set env vars in the panel.
 7. Optional: if your built files live elsewhere, set **`STATIC_DIR`** in `backend/.env` to the absolute path of the folder that contains `index.html`.

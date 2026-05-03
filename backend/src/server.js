@@ -36,15 +36,18 @@ function isPassenger() {
 const clientOrigin = process.env.CLIENT_URL?.trim() || 'http://localhost:5173';
 const corsOrigins = new Set(
   clientOrigin.includes(',')
-    ? clientOrigin.split(',').map((o) => o.trim())
+    ? clientOrigin.split(',').map((o) => o.trim()).filter(Boolean)
     : [clientOrigin]
 );
-if ([...corsOrigins].some((o) => o.includes('localhost'))) {
+/** On VPS / Passenger, allow only CLIENT_URL(s). Locally, also allow Vite dev origins. */
+const lockDownCors = process.env.NODE_ENV === 'production' || isPassenger();
+if (!lockDownCors) {
+  if ([...corsOrigins].some((o) => o.includes('localhost'))) {
+    corsOrigins.add('http://127.0.0.1:5173');
+  }
+  corsOrigins.add('http://localhost:5173');
   corsOrigins.add('http://127.0.0.1:5173');
 }
-/* Dev: admin UI may call API at http://127.0.0.1:5000 from either localhost or 127.0.0.1 Vite */
-corsOrigins.add('http://localhost:5173');
-corsOrigins.add('http://127.0.0.1:5173');
 app.use(
   cors({
     origin: [...corsOrigins],
@@ -69,9 +72,12 @@ const distPath = path.resolve(
   process.env.STATIC_DIR?.trim() || path.join(__dirname, '../../frontend/dist'),
 );
 const distIndex = path.join(distPath, 'index.html');
+/** Passenger often runs without NODE_ENV=production; still serve the SPA so /admin and deep links work. */
 const serveFrontend =
-  (process.env.NODE_ENV === 'production' || process.env.SERVE_FRONTEND === '1') &&
-  fs.existsSync(distIndex);
+  fs.existsSync(distIndex) &&
+  (process.env.NODE_ENV === 'production' ||
+    process.env.SERVE_FRONTEND === '1' ||
+    (isPassenger() && process.env.SERVE_FRONTEND !== '0'));
 
 if (serveFrontend) {
   app.use(express.static(distPath, { index: false }));

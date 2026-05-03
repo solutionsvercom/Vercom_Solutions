@@ -1,0 +1,9 @@
+# SPA fallback for Apache (cPanel / static `dist` only). Copy sits next to `index.html` after `npm run build`.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
