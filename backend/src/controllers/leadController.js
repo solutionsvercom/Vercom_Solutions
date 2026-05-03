@@ -27,6 +27,9 @@ function validateLeadBody(body) {
   if (!resolvedMessage && source === 'portfolio_access') {
     resolvedMessage = 'Requested access to explore portfolio projects.';
   }
+  if (!resolvedMessage && source === 'newsletter') {
+    resolvedMessage = 'Footer newsletter signup — requested updates and insights.';
+  }
   if (!resolvedMessage) {
     return { ok: false, message: 'Message is required.' };
   }
@@ -61,14 +64,27 @@ function validateLeadBody(body) {
     }
   }
 
+  if (source === 'newsletter') {
+    const em = email ? String(email).trim().toLowerCase() : '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+      return { ok: false, message: 'A valid email is required.' };
+    }
+    const ph = phone ? String(phone).trim() : '';
+    if (ph && ph.length < 5) {
+      return { ok: false, message: 'If provided, enter a valid phone number.' };
+    }
+  }
+
   const resolvedName =
     source === 'ai_chat'
       ? String(name || 'Chat visitor').trim() || 'Chat visitor'
       : source === 'portfolio_access'
         ? String(name || 'Portfolio visitor').trim() || 'Portfolio visitor'
-        : String(name).trim();
+        : source === 'newsletter'
+          ? String(name || 'Newsletter subscriber').trim() || 'Newsletter subscriber'
+          : String(name).trim();
 
-  if (!resolvedName && source !== 'whatsapp_intent' && source !== 'portfolio_access') {
+  if (!resolvedName && source !== 'whatsapp_intent' && source !== 'portfolio_access' && source !== 'newsletter') {
     return { ok: false, message: 'Name is required.' };
   }
 
@@ -84,7 +100,12 @@ function validateLeadBody(body) {
       company: company ? String(company).trim() : '',
       industry: industry ? String(industry).trim() : '',
       budgetRange: budgetRange ? String(budgetRange).trim() : '',
-      subject: subject ? String(subject).trim() : '',
+      subject:
+        source === 'newsletter'
+          ? String(subject || 'Newsletter').trim() || 'Newsletter'
+          : subject
+            ? String(subject).trim()
+            : '',
       message: resolvedMessage,
       selectedServices: Array.isArray(selectedServices) ? selectedServices.map(String) : [],
       meta: meta && typeof meta === 'object' ? meta : {},

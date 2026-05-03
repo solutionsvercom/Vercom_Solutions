@@ -1,7 +1,128 @@
 import { motion } from 'motion/react';
-import { Facebook, Twitter, Instagram, Linkedin, Github, Mail, MapPin, Phone, Zap } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from 'lucide-react';
+import { type FormEvent, useState } from 'react';
+import { BrandLogoBox } from './BrandLogoBox';
+import { apiUrl } from '../lib/apiBase';
+
+type LucideSocial = { kind: 'lucide'; icon: LucideIcon; href: string; label: string; color: string };
+type ImgSocial = { kind: 'img'; src: string; href: string; label: string; color: string };
+
+const socialLinks: (LucideSocial | ImgSocial)[] = [
+  {
+    kind: 'lucide',
+    icon: Facebook,
+    href: 'https://www.facebook.com/profile.php?id=61585148619065',
+    label: 'Facebook',
+    color: 'hover:text-blue-400',
+  },
+  {
+    kind: 'lucide',
+    icon: Twitter,
+    href: 'https://x.com/VercomSolutions',
+    label: 'X (Twitter)',
+    color: 'hover:text-cyan-400',
+  },
+  {
+    kind: 'lucide',
+    icon: Instagram,
+    href: 'https://www.instagram.com/vercom_solutions/',
+    label: 'Instagram',
+    color: 'hover:text-pink-400',
+  },
+  {
+    kind: 'lucide',
+    icon: Linkedin,
+    href: 'https://www.linkedin.com/in/vercom-solutions',
+    label: 'LinkedIn',
+    color: 'hover:text-blue-500',
+  },
+  {
+    kind: 'lucide',
+    icon: Youtube,
+    href: 'https://www.youtube.com/@VercomSolutions',
+    label: 'YouTube',
+    color: 'hover:text-red-500',
+  },
+  {
+    kind: 'img',
+    src: 'https://cdn.simpleicons.org/quora/22d3ee',
+    href: 'https://www.quora.com/profile/Vercom-Solutions',
+    label: 'Quora',
+    color: 'hover:brightness-125',
+  },
+  {
+    kind: 'img',
+    src: 'https://cdn.simpleicons.org/whatsapp/22d3ee',
+    href: 'https://wa.me/917042183847',
+    label: 'WhatsApp',
+    color: 'hover:brightness-125',
+  },
+  {
+    kind: 'img',
+    src: 'https://cdn.simpleicons.org/pinterest/22d3ee',
+    href: 'https://in.pinterest.com/vinayvercom/',
+    label: 'Pinterest',
+    color: 'hover:brightness-125',
+  },
+];
+
+const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function Footer() {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterPhone, setNewsletterPhone] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterFeedback, setNewsletterFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(
+    null,
+  );
+
+  const submitNewsletter = async (e: FormEvent) => {
+    e.preventDefault();
+    setNewsletterFeedback(null);
+    const em = newsletterEmail.trim().toLowerCase();
+    if (!EMAIL_RX.test(em)) {
+      setNewsletterFeedback({ type: 'err', text: 'Please enter a valid email address.' });
+      return;
+    }
+    const ph = newsletterPhone.trim();
+    if (ph && ph.length < 5) {
+      setNewsletterFeedback({ type: 'err', text: 'If you add a phone number, use a valid one.' });
+      return;
+    }
+
+    setNewsletterSubmitting(true);
+    try {
+      const res = await fetch(apiUrl('/api/leads'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          source: 'newsletter',
+          name: 'Newsletter subscriber',
+          email: em,
+          phone: ph,
+          subject: 'Newsletter',
+          message: 'Footer newsletter signup — requested updates and insights.',
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || !json.success) {
+        setNewsletterFeedback({
+          type: 'err',
+          text: typeof json.message === 'string' ? json.message : 'Something went wrong. Try again.',
+        });
+        return;
+      }
+      setNewsletterFeedback({ type: 'ok', text: "Thanks — you're on the list. We'll be in touch." });
+      setNewsletterEmail('');
+      setNewsletterPhone('');
+    } catch {
+      setNewsletterFeedback({ type: 'err', text: 'Network error. Check your connection.' });
+    } finally {
+      setNewsletterSubmitting(false);
+    }
+  };
+
   const footerLinks = {
     Services: [
       'SaaS Development',
@@ -16,24 +137,15 @@ export function Footer() {
     Legal: ['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'Disclaimer'],
   };
 
-  const socialLinks = [
-    { icon: Facebook, href: '#', color: 'hover:text-blue-400' },
-    { icon: Twitter, href: '#', color: 'hover:text-cyan-400' },
-    { icon: Instagram, href: '#', color: 'hover:text-pink-400' },
-    { icon: Linkedin, href: '#', color: 'hover:text-blue-500' },
-    { icon: Github, href: '#', color: 'hover:text-violet-400' },
-  ];
-
-  // Client logos for the scrolling banner
   const clientLogos = [
-    { name: 'Microsoft', abbr: 'MS' },
-    { name: 'Amazon', abbr: 'AMZ' },
-    { name: 'Google', abbr: 'GOO' },
-    { name: 'Meta', abbr: 'META' },
-    { name: 'Apple', abbr: 'APL' },
-    { name: 'Netflix', abbr: 'NFX' },
-    { name: 'Tesla', abbr: 'TSLA' },
-    { name: 'Nvidia', abbr: 'NVDA' },
+    { name: 'YMB Go Express', role: 'CEO' },
+    { name: 'Utkarsh Infratech', role: 'Director' },
+    { name: 'Navjyoti Kids Villa School', role: 'Director' },
+    { name: 'KYK', role: 'Director' },
+    { name: 'Lifee', role: 'Founder and CEO' },
+    { name: 'Aid For Mankind', role: 'CEO' },
+    { name: 'ReviewMyFlat', role: 'Director' },
+    { name: 'karakchaa', role: '' },
   ];
 
   return (
@@ -54,13 +166,7 @@ export function Footer() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
-              <motion.div
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-[0_0_30px_rgba(0,255,255,0.4)]"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              >
-                <Zap className="w-6 h-6 text-white" />
-              </motion.div>
+              <BrandLogoBox />
               <div>
                 <h2 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
                   Vercom Solutions
@@ -73,21 +179,25 @@ export function Footer() {
             </p>
             
             {/* Social Links */}
-            <div className="flex gap-3">
-              {socialLinks.map((social, index) => {
-                const Icon = social.icon;
-                return (
-                  <motion.a
-                    key={index}
-                    href={social.href}
-                    className={`p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 ${social.color} transition-colors`}
-                    whileHover={{ scale: 1.1, y: -3 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </motion.a>
-                );
-              })}
+            <div className="flex flex-wrap gap-3">
+              {socialLinks.map((social, index) => (
+                <motion.a
+                  key={`${social.label}-${index}`}
+                  href={social.href}
+                  aria-label={social.label}
+                  target={social.href.startsWith('http') ? '_blank' : undefined}
+                  rel={social.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  className={`p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 ${social.color} transition-colors inline-flex items-center justify-center`}
+                  whileHover={{ scale: 1.1, y: -3 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {social.kind === 'lucide' ? (
+                    <social.icon className="w-5 h-5" aria-hidden />
+                  ) : (
+                    <img src={social.src} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+                  )}
+                </motion.a>
+              ))}
             </div>
           </div>
 
@@ -149,20 +259,50 @@ export function Footer() {
             <p className="text-cyan-100/60 mb-6">
               Subscribe to our newsletter for the latest updates and insights
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-6 py-4 rounded-xl bg-white/5 border border-cyan-500/30 text-white placeholder-cyan-100/40 focus:outline-none focus:border-cyan-500 transition-colors backdrop-blur-sm"
-              />
-              <motion.button
-                className="px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-white font-semibold shadow-[0_0_30px_rgba(0,255,255,0.4)]"
-                whileHover={{ scale: 1.05, boxShadow: '0 0 50px rgba(0,255,255,0.6)' }}
-                whileTap={{ scale: 0.95 }}
-              >
-              Get Started
-              </motion.button>
-            </div>
+            <form
+              onSubmit={(ev) => void submitNewsletter(ev)}
+              className="flex flex-col gap-3 max-w-xl mx-auto text-left"
+            >
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  name="newsletter-email"
+                  autoComplete="email"
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="flex-1 min-w-0 px-6 py-4 rounded-xl bg-white/5 border border-cyan-500/30 text-white placeholder-cyan-100/40 focus:outline-none focus:border-cyan-500 transition-colors backdrop-blur-sm"
+                />
+                <input
+                  type="tel"
+                  name="newsletter-phone"
+                  autoComplete="tel"
+                  value={newsletterPhone}
+                  onChange={(e) => setNewsletterPhone(e.target.value)}
+                  placeholder="Phone (optional)"
+                  className="flex-1 min-w-0 px-6 py-4 rounded-xl bg-white/5 border border-cyan-500/30 text-white placeholder-cyan-100/40 focus:outline-none focus:border-cyan-500 transition-colors backdrop-blur-sm"
+                />
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <motion.button
+                  type="submit"
+                  disabled={newsletterSubmitting}
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 text-white font-semibold shadow-[0_0_30px_rgba(0,255,255,0.4)] disabled:opacity-60 disabled:cursor-not-allowed"
+                  whileHover={newsletterSubmitting ? undefined : { scale: 1.05, boxShadow: '0 0 50px rgba(0,255,255,0.6)' }}
+                  whileTap={newsletterSubmitting ? undefined : { scale: 0.95 }}
+                >
+                  {newsletterSubmitting ? 'Subscribing…' : 'Subscribe'}
+                </motion.button>
+                {newsletterFeedback && (
+                  <p
+                    className={`text-sm ${newsletterFeedback.type === 'ok' ? 'text-emerald-400' : 'text-rose-400'}`}
+                  >
+                    {newsletterFeedback.text}
+                  </p>
+                )}
+              </div>
+            </form>
           </div>
         </motion.div>
 
@@ -184,20 +324,22 @@ export function Footer() {
               <motion.div
                 className="flex gap-12 flex-shrink-0"
                 animate={{ x: ['0%', '-100%'] }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
               >
                 {clientLogos.map((client, index) => (
                   <motion.div
                     key={index}
-                    className="flex-shrink-0 w-32 h-20 flex flex-col items-center justify-center gap-1 px-6 py-3 rounded-xl border border-cyan-500/10 bg-cyan-500/5 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-300"
+                    className="flex-shrink-0 w-44 sm:w-48 min-h-[5.25rem] flex flex-col items-center justify-center gap-1 px-4 py-3 rounded-xl border border-cyan-500/10 bg-cyan-500/5 backdrop-blur-sm transition-all duration-300"
                     whileHover={{
-                      scale: 1.1,
+                      scale: 1.05,
                       boxShadow: '0 0 20px rgba(0, 255, 255, 0.3)',
                       borderColor: 'rgba(0, 255, 255, 0.3)',
                     }}
                   >
-                    <span className="text-2xl font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors">{client.abbr}</span>
-                    <span className="text-xs text-cyan-100/40 hover:text-cyan-100/60 transition-colors">{client.name}</span>
+                    <span className="text-sm font-bold text-cyan-200 text-center leading-snug">{client.name}</span>
+                    {client.role ? (
+                      <span className="text-xs text-cyan-100/55 text-center leading-tight">{client.role}</span>
+                    ) : null}
                   </motion.div>
                 ))}
               </motion.div>
@@ -206,20 +348,22 @@ export function Footer() {
               <motion.div
                 className="flex gap-12 flex-shrink-0"
                 animate={{ x: ['0%', '-100%'] }}
-                transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
               >
                 {clientLogos.map((client, index) => (
                   <motion.div
                     key={`duplicate-${index}`}
-                    className="flex-shrink-0 w-32 h-20 flex flex-col items-center justify-center gap-1 px-6 py-3 rounded-xl border border-cyan-500/10 bg-cyan-500/5 backdrop-blur-sm grayscale hover:grayscale-0 transition-all duration-300"
+                    className="flex-shrink-0 w-44 sm:w-48 min-h-[5.25rem] flex flex-col items-center justify-center gap-1 px-4 py-3 rounded-xl border border-cyan-500/10 bg-cyan-500/5 backdrop-blur-sm transition-all duration-300"
                     whileHover={{
-                      scale: 1.1,
+                      scale: 1.05,
                       boxShadow: '0 0 20px rgba(0, 255, 255, 0.3)',
                       borderColor: 'rgba(0, 255, 255, 0.3)',
                     }}
                   >
-                    <span className="text-2xl font-bold text-cyan-400/60 hover:text-cyan-400 transition-colors">{client.abbr}</span>
-                    <span className="text-xs text-cyan-100/40 hover:text-cyan-100/60 transition-colors">{client.name}</span>
+                    <span className="text-sm font-bold text-cyan-200 text-center leading-snug">{client.name}</span>
+                    {client.role ? (
+                      <span className="text-xs text-cyan-100/55 text-center leading-tight">{client.role}</span>
+                    ) : null}
                   </motion.div>
                 ))}
               </motion.div>

@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
-import { Menu, X, Zap } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import { BrandLogoBox } from './BrandLogoBox';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,24 +32,7 @@ export function Navbar() {
             whileTap={{ scale: 0.98 }}
           >
             <Link to="/" className="flex items-center gap-3">
-              <motion.div
-                className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center shadow-[0_0_30px_rgba(0,255,255,0.4)]"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              >
-                <Zap className="w-6 h-6 text-white" />
-                <motion.div
-                  className="absolute inset-0 rounded-xl"
-                  animate={{
-                    boxShadow: [
-                      '0 0 20px rgba(0,255,255,0.4)',
-                      '0 0 40px rgba(138,43,226,0.5)',
-                      '0 0 20px rgba(0,255,255,0.4)',
-                    ],
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-              </motion.div>
+              <BrandLogoBox />
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-violet-400 bg-clip-text text-transparent">
                   Vercom Solutions

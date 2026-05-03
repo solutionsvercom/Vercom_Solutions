@@ -7,6 +7,7 @@ const SOURCES = [
   'ai_assistant',
   'ai_chat',
   'portfolio_access',
+  'newsletter',
 ];
 
 const STATUSES = ['new', 'contacted', 'in_progress', 'closed', 'won'];

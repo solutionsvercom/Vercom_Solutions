@@ -49,6 +49,7 @@ const SOURCE_LABELS: Record<string, string> = {
   ai_assistant: 'AI assistant',
   ai_chat: 'AI chat (widget)',
   portfolio_access: 'Portfolio access',
+  newsletter: 'Newsletter',
 };
 
 const STATUS_OPTIONS = ['new', 'contacted', 'in_progress', 'closed', 'won'] as const;
@@ -231,7 +232,7 @@ export function AdminDashboardPage() {
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {stats && (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {[
               { label: 'Total leads', value: stats.total, color: 'from-cyan-500/20 to-cyan-600/5' },
               { label: 'New today', value: stats.newToday, color: 'from-violet-500/20 to-violet-600/5' },
@@ -249,6 +250,11 @@ export function AdminDashboardPage() {
                 label: 'Portfolio access',
                 value: stats.bySource.portfolio_access ?? 0,
                 color: 'from-fuchsia-500/20 to-fuchsia-600/5',
+              },
+              {
+                label: 'Newsletter',
+                value: stats.bySource.newsletter ?? 0,
+                color: 'from-sky-500/20 to-sky-600/5',
               },
             ].map((card) => (
               <motion.div

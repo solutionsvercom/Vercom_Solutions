@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
-import { Lock, Zap } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BrandLogoBox } from '../components/BrandLogoBox';
 import { apiUrl } from '../lib/apiBase';
 
 const STORAGE_KEY = 'vercom_admin_key';
@@ -70,9 +71,7 @@ export function AdminLoginPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-violet-600 flex items-center justify-center">
-            <Zap className="w-6 h-6 text-white" />
-          </div>
+          <BrandLogoBox />
           <div>
             <p className="text-cyan-400 text-sm font-semibold">Vercom Solutions</p>
             <h1 className="text-white text-xl font-bold">Admin login</h1>
