@@ -1,8 +1,9 @@
 # Dependencies
 node_modules/
 
-# Build output (run `npm run build` on the server or locally before deploy)
+# Build output (run `npm run build` from repo root — SPA is written to backend/public)
 frontend/dist/
+backend/public/
 dist/
 
 # Environment and secrets (copy from .env.example)

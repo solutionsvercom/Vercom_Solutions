@@ -39,8 +39,9 @@ const corsOrigins = new Set(
     ? clientOrigin.split(',').map((o) => o.trim()).filter(Boolean)
     : [clientOrigin]
 );
-/** On VPS / Passenger, allow only CLIENT_URL(s). Locally, also allow Vite dev origins. */
-const lockDownCors = process.env.NODE_ENV === 'production' || isPassenger();
+/** Production-like deploy: allow only CLIENT_URL(s). Hostinger: set NODE_ENV=production or SERVE_FRONTEND=1. */
+const lockDownCors =
+  process.env.NODE_ENV === 'production' || isPassenger() || process.env.SERVE_FRONTEND === '1';
 if (!lockDownCors) {
   if ([...corsOrigins].some((o) => o.includes('localhost'))) {
     corsOrigins.add('http://127.0.0.1:5173');
@@ -67,17 +68,18 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/admin', adminRoutes);
 
-/** Production / VPS: serve Vite build from frontend/dist (same origin as /api). */
+/** Production: serve Vite build from `backend/public` (same origin as /api). Override with STATIC_DIR. */
 const distPath = path.resolve(
-  process.env.STATIC_DIR?.trim() || path.join(__dirname, '../../frontend/dist'),
+  process.env.STATIC_DIR?.trim() || path.join(__dirname, '../public'),
 );
 const distIndex = path.join(distPath, 'index.html');
-/** Passenger often runs without NODE_ENV=production; still serve the SPA so /admin and deep links work. */
+/** Hostinger / WHM: set NODE_ENV=production or SERVE_FRONTEND=1. Passenger auto-serves when dist exists. SERVE_FRONTEND=0 disables. */
 const serveFrontend =
   fs.existsSync(distIndex) &&
+  process.env.SERVE_FRONTEND !== '0' &&
   (process.env.NODE_ENV === 'production' ||
     process.env.SERVE_FRONTEND === '1' ||
-    (isPassenger() && process.env.SERVE_FRONTEND !== '0'));
+    isPassenger());
 
 if (serveFrontend) {
   app.use(express.static(distPath, { index: false }));
@@ -88,7 +90,7 @@ if (serveFrontend) {
   });
 } else if (process.env.NODE_ENV === 'production') {
   console.warn(
-    `[static] No ${distIndex} — run "npm run build" from the repo root, or set STATIC_DIR to your dist folder.`,
+    `[static] No ${distIndex} — run "npm run build" from the repo root (outputs to backend/public), or set STATIC_DIR.`,
   );
 }
 

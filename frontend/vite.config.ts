@@ -24,7 +24,8 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist',
+    /** Hostinger / single Node app: static files live next to the API under `backend/public`. */
+    outDir: path.resolve(__dirname, '../backend/public'),
     emptyOutDir: true,
     sourcemap: false,
   },

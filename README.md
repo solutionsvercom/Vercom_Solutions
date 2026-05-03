@@ -6,7 +6,7 @@ This project is converted from a Figma AI-generated frontend into a full MERN st
 ## Project Structure
 
 - `frontend`: React + Vite app (uses your existing UI components)
-- `backend`: Express + Node.js API with MongoDB (Mongoose)
+- `backend`: Express + Node.js API with MongoDB (Mongoose); **production static files** are built into **`backend/public`**
 - `src`: Existing shared frontend source from the original export
 
 ## Setup
@@ -25,39 +25,43 @@ This project is converted from a Figma AI-generated frontend into a full MERN st
 - `POST /api/contact` - save contact form submissions in MongoDB
 - `POST /api/chat` - chatbot response endpoint (saves chat + reply)
 
-## Production build (WHM / VPS)
+## Production build (single Node app)
 
-1. On the server, clone or upload the repo (layout can match `Vercom_Solutions` with `backend/` + `frontend/` + shared `src/` as in this monorepo).
-2. Install dependencies: `npm install` (from the **repository root**).
-3. Build the SPA: `npm run build` — output is **`frontend/dist/`** (ignored by git; do not commit `node_modules` or `.env`).
-4. Configure **`backend/.env`** (copy from `backend/.env.example`):
+The Vite build outputs the SPA into **`backend/public`**. Express serves **`/api/*`** and **`/`** (and client routes like `/admin`) from the same process, so the browser uses same-origin **`/api/...`** with no extra CORS setup.
+
+1. On the server, clone or upload the full repo (`backend/`, `frontend/`, `src/`, root `package.json`).
+2. From the **repository root**: `npm install` then **`npm run build`** (creates/updates `backend/public/`).
+3. Configure **`backend/.env`**:
    - `MONGODB_URI`, `ADMIN_SECRET`, `JWT_SECRET`
-   - `NODE_ENV=production`
-   - `CLIENT_URL=https://vercomsolutions.in` (add `,https://www.vercomsolutions.in` if you use `www`)
-5. Start the API + static site: `npm start` (runs `node backend/src/server.js`). With `NODE_ENV=production`, Express serves **`frontend/dist`** and all **`/api/*`** routes on the same port, so the React app can call `/api/...` without CORS issues.
-6. Point your reverse proxy (Apache/Nginx in WHM) at that Node process port (e.g. `5000`), or use **Application Manager / Passenger** with `npm start` and set env vars in the panel.
-7. Optional: if your built files live elsewhere, set **`STATIC_DIR`** in `backend/.env` to the absolute path of the folder that contains `index.html`.
+   - **`NODE_ENV=production`** (recommended) **or** **`SERVE_FRONTEND=1`** if your host does not set `NODE_ENV`
+   - **`CLIENT_URL=https://your-domain.com`** (no trailing slash; comma-separate `www` if needed)
+   - **`PORT`**: use the port your host assigns (Hostinger sets this automatically; do not hardcode in production unless required)
+4. Start the app from **`backend`**: `npm start` (runs `node src/server.js`), **or** from repo root: `npm start` (same).
 
-### WHM → Application Manager (Node.js) — Vercom example
+Optional: if the built files are not at `backend/public`, set **`STATIC_DIR`** to the absolute folder that contains `index.html`.
 
-Use these so **one** Node app serves the **React site** (`/`) and **API** (`/api/...`) on the same domain.
+## Hostinger (Node.js web app)
 
-| Field | Recommended value |
-|--------|-------------------|
-| **Application name** | Vercom Solutions |
-| **Deployment domain** | `vercomsolutions.in` (or `www.vercomsolutions.in` if that is your primary host) |
-| **Base application URL** | **`https://vercomsolutions.in` only** — do **not** set the base path to `/api`. This app already exposes APIs under `/api/...`. If the manager only shows “domain + path” and you put `/api` as the path, the browser may request `/api/api/...` and break forms and admin. |
-| **Application path** | Path to the folder that contains **`backend/package.json`**, relative to the account home directory. Examples: `Vercom_Solutions/backend` or `backend` if the app lives directly under home. |
-| **Deployment environment** | **Production** |
-| **Startup** | Use **NPM** with script **`start`**, or set the application startup file to **`src/server.js`** (same as `npm start`). Run **`npm install`** in that `backend` folder (and build the frontend from the repo root so `frontend/dist` exists next to `backend`). |
+Typical setup: **one** Node application serves both the React site and the API.
 
-In **`backend/.env`** on the server set **`NODE_ENV=production`**, **`CLIENT_URL=https://vercomsolutions.in`** (match your live URL, including `https://`), **`MONGODB_URI`**, and **`ADMIN_SECRET`**.
+| Step | What to do |
+|------|------------|
+| **Files** | Deploy the full monorepo (or Git deploy) so `frontend/`, `backend/`, `src/`, and root `package.json` exist. |
+| **Build** | In hPanel, use a **build** step from the **repository root**, e.g. `npm ci && npm run build`, so `backend/public/index.html` exists before start. Alternatively SSH: `cd` to repo root, `npm install`, `npm run build`. |
+| **App root** | Set the application directory to **`backend`** (folder that contains `backend/package.json`). |
+| **Start command** | **`npm start`** or startup file **`src/server.js`**. |
+| **Environment variables** | Add `MONGODB_URI`, `ADMIN_SECRET`, `JWT_SECRET`, `CLIENT_URL` (your live `https://` URL), **`NODE_ENV=production`**. If the panel does not support `NODE_ENV`, set **`SERVE_FRONTEND=1`** so the SPA is served and CORS matches production. |
+| **Do not** | Mount the app under a path like `/api` only — the site expects `/` for pages and `/api/...` for JSON. |
 
-The server detects **Phusion Passenger** and calls **`app.listen('passenger')`** automatically; locally it still uses **`PORT`** / **`HOST`** as before.
+If Hostinger only runs install/start inside **`backend`** and has no “parent” build: run **`npm run build`** inside **`backend`** once (that script runs `npm --prefix .. run build` and fills **`backend/public`**), or run the root build via SSH.
+
+### WHM / Phusion Passenger (same layout)
+
+The app still uses **`backend/public`** for static files. Set **`Application path`** to the folder with **`backend/package.json`**. Run **`npm run build`** from the **repo root** on deploy. In **`backend/.env`**: **`NODE_ENV=production`**, **`CLIENT_URL`**, secrets. Passenger is detected automatically for `app.listen('passenger')`.
 
 ## GitHub (replace an old repo with this project)
 
-`backend/.env`, `node_modules`, and `frontend/dist` are **not** committed (see `.gitignore`). Secrets stay on your machine and server only.
+`backend/.env`, `node_modules`, and **`backend/public`** are **not** committed (see `.gitignore`). Run **`npm run build`** on the server after each deploy that changes the frontend.
 
 1. On GitHub, open your existing Vercom repository and copy its URL (HTTPS or SSH), e.g. `https://github.com/YOUR_USER/vercom-solutions.git`.
 
@@ -82,4 +86,3 @@ The server detects **Phusion Passenger** and calls **`app.listen('passenger')`**
    ```
 
    Use `--force` only if you intend to replace all remote history with this project.
-  
