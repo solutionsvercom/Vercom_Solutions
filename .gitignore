@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output (run `npm run build` on the server or locally before deploy)
+frontend/dist/
+dist/
+
+# Environment and secrets (copy from .env.example)
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Logs and debug
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Vite / caches
+.vite/
+frontend/node_modules/.vite/
+*.local
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Optional PM2
+.pm2/

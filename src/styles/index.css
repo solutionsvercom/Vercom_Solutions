@@ -1,0 +1,13 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Lead admin: native <select> / <option> contrast (Windows Chrome often uses light option panel) */
+.admin-dashboard select,
+.admin-dashboard select option {
+  background-color: #0f172a;
+  color: #cffafe;
+}
+.admin-dashboard select {
+  border-color: rgba(34, 211, 238, 0.35);
+}
