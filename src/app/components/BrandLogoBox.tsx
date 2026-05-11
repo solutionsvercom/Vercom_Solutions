@@ -1,5 +1,5 @@
 const VERCOM_LOGO_URL =
-  'https://res.cloudinary.com/dzqn75ugc/image/upload/v1777822284/logo_rhqqma.png';
+  'https://res.cloudinary.com/dzqn75ugc/image/upload/v1769086394/Vercom_logo-removebg-preview_gf6wkn.png';
 
 export function BrandLogoBox() {
   return (
