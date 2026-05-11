@@ -61,7 +61,22 @@ export function Contact() {
     {
       icon: Mail,
       title: 'Email',
-      value: 'solutionsvercom@gmail.com',
+      value: (
+        <>
+          <a
+            href="mailto:tech@vercomsolutions.in"
+            className="block hover:text-cyan-300 transition-colors"
+          >
+            tech@vercomsolutions.in
+          </a>
+          <a
+            href="mailto:contact@vercomsolutions.in"
+            className="block hover:text-cyan-300 transition-colors"
+          >
+            contact@vercomsolutions.in
+          </a>
+        </>
+      ),
       color: 'from-cyan-500 to-blue-600',
     },
     {
@@ -280,9 +295,9 @@ export function Contact() {
                         <h4 className="text-cyan-100/60 text-sm mb-1">
                           {info.title}
                         </h4>
-                        <p className="text-white font-semibold text-lg">
+                        <div className="text-white font-semibold text-lg flex flex-col gap-0.5">
                           {info.value}
-                        </p>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

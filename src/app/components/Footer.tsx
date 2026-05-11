@@ -225,7 +225,26 @@ export function Footer() {
         {/* Contact Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {[
-            { icon: Mail, text: 'solutionsvercom@gmail.com', color: 'from-cyan-500 to-blue-600' },
+            {
+              icon: Mail,
+              text: (
+                <>
+                  <a
+                    href="mailto:tech@vercomsolutions.in"
+                    className="block hover:text-cyan-400 transition-colors"
+                  >
+                    tech@vercomsolutions.in
+                  </a>
+                  <a
+                    href="mailto:contact@vercomsolutions.in"
+                    className="block hover:text-cyan-400 transition-colors"
+                  >
+                    contact@vercomsolutions.in
+                  </a>
+                </>
+              ),
+              color: 'from-cyan-500 to-blue-600',
+            },
             { icon: Phone, text: '+91 7042183847', color: 'from-violet-500 to-purple-600' },
             { icon: MapPin, text: 'D-32 Third Floor, Main Vikas Marg, Laxmi Nagar, New Delhi-110092', color: 'from-pink-500 to-rose-600' },
           ].map((item, index) => {
@@ -239,7 +258,7 @@ export function Footer() {
                 <div className={`p-3 rounded-xl bg-gradient-to-br ${item.color} shadow-lg`}>
                   <Icon className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-cyan-100">{item.text}</span>
+                <div className="text-cyan-100 flex flex-col gap-1">{item.text}</div>
               </motion.div>
             );
           })}
