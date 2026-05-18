@@ -1,4 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import {
+  LEGACY_ROUTE_REDIRECTS,
+  ServiceDetailLegacyRedirect,
+} from './routes/legacyRedirects';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
@@ -25,23 +29,18 @@ function PublicSite() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/Home" element={<HomePage />} />
         <Route path="/solutions" element={<SolutionsPage />} />
-        <Route path="/Solutions" element={<SolutionsPage />} />
         <Route path="/services" element={<ServicesPage />} />
-        <Route path="/Services" element={<ServicesPage />} />
         <Route path="/services/:slug" element={<ServiceDetailPage />} />
-        <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+        <Route path="/ServiceDetail" element={<ServiceDetailLegacyRedirect />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
-        <Route path="/Portfolio" element={<PortfolioPage />} />
         <Route path="/industries" element={<SolutionsPage />} />
-        <Route path="/Industries" element={<SolutionsPage />} />
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/About" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/Contact" element={<ContactPage />} />
         <Route path="/get-started" element={<GetStartedPage />} />
-        <Route path="/GetStarted" element={<GetStartedPage />} />
+        {LEGACY_ROUTE_REDIRECTS.map(({ path, to }) => (
+          <Route key={path} path={path} element={<Navigate to={to} replace />} />
+        ))}
         <Route path="*" element={<HomePage />} />
       </Routes>
       <Footer />

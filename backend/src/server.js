@@ -9,6 +9,7 @@ import contactRoutes from './routes/contactRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import { legacyRedirects } from './middleware/legacyRedirects.js';
 import { getConfiguredAdminSecret } from './utils/adminSecret.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -82,6 +83,7 @@ const serveFrontend =
     isPassenger());
 
 if (serveFrontend) {
+  app.use(legacyRedirects);
   app.use(express.static(distPath, { index: false }));
   app.use((req, res, next) => {
     if (req.path.startsWith('/api')) return next();

@@ -1,7 +1,21 @@
-# SPA fallback for Apache (cPanel / static `dist` only). Copy sits next to `index.html` after `npm run build`.
+# Legacy URL 301 redirects (old PascalCase paths indexed by Google)
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  RewriteRule ^Home/?$ / [R=301,L]
+  RewriteRule ^Solutions/?$ /solutions [R=301,L]
+  RewriteRule ^Services/?$ /services [R=301,L]
+  RewriteRule ^Portfolio/?$ /portfolio [R=301,L]
+  RewriteRule ^About/?$ /about [R=301,L]
+  RewriteRule ^Contact/?$ /contact [R=301,L]
+  RewriteRule ^GetStarted/?$ /get-started [R=301,L]
+  RewriteRule ^Industries/?$ /industries [R=301,L]
+
+  RewriteCond %{QUERY_STRING} (^|&)slug=([^&]+) [NC]
+  RewriteRule ^ServiceDetail/?$ /services/%2? [R=301,L]
+  RewriteRule ^ServiceDetail/?$ /services [R=301,L]
+
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
