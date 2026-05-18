@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { GoogleAnalytics } from './components/GoogleAnalytics';
 import {
   LEGACY_ROUTE_REDIRECTS,
   ServiceDetailLegacyRedirect,
@@ -53,6 +54,7 @@ function PublicSite() {
 export default function App() {
   return (
     <div className="relative min-h-screen overflow-x-hidden">
+      <GoogleAnalytics />
       <Routes>
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
