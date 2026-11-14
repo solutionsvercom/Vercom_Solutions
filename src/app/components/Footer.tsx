@@ -33,7 +33,7 @@ const socialLinks: (LucideSocial | ImgSocial)[] = [
   {
     kind: 'lucide',
     icon: Linkedin,
-    href: 'https://www.linkedin.com/company/144144049/admin/page-posts/published/',
+    href: 'https://www.linkedin.com/company/vercom-solutions-pvt-ltd/home/?viewAsMember=true',
     label: 'LinkedIn',
     color: 'hover:text-blue-500',
   },
