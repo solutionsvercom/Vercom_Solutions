@@ -32,6 +32,7 @@ export function ServicesPage() {
           </h1>
           <p className="mt-5 text-cyan-100/70 max-w-3xl mx-auto">
             From concept to deployment, we deliver end-to-end solutions that drive business growth and digital transformation.
+            Open any service below for a dedicated page with process, benefits, and deliverables.
           </p>
         </motion.div>
 

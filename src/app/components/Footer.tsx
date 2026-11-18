@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import type { LucideIcon } from 'lucide-react';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { BrandLogoBox } from './BrandLogoBox';
 import { apiUrl } from '../lib/apiBase';
 
@@ -123,18 +124,34 @@ export function Footer() {
     }
   };
 
-  const footerLinks = {
+  const footerLinks: Record<string, { label: string; href: string }[]> = {
     Services: [
-      'SaaS Development',
-      'CRM Solutions',
-      'ERP (Enterprise Resource Planning)',
-      'Web Development',
-      'Digital Marketing',
-      'Brand Advertisement & Luxury Promotion Shoots',
+      { label: 'SaaS Development', href: '/services/saas-development' },
+      { label: 'CRM Solutions', href: '/services/crm-solutions' },
+      { label: 'ERP (Enterprise Resource Planning)', href: '/services/erp-enterprise-resource-planning' },
+      { label: 'Web Development', href: '/services/web-development' },
+      { label: 'Digital Marketing', href: '/services/digital-marketing' },
+      { label: 'Brand Advertisement & Luxury Promotion Shoots', href: '/services/brand-advertisement-luxury-promotion-shoots' },
+      { label: 'View All Services', href: '/services' },
     ],
-    Company: ['About Us', 'Why Choose Us', 'Industries', 'Contact'],
-    Resources: ['Get Started', 'Case Studies', 'Consultation', 'Support'],
-    Legal: ['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'Disclaimer'],
+    Company: [
+      { label: 'About Us', href: '/about' },
+      { label: 'Why Choose Us', href: '/about' },
+      { label: 'Industries', href: '/industries' },
+      { label: 'Contact', href: '/contact' },
+    ],
+    Resources: [
+      { label: 'Get Started', href: '/get-started' },
+      { label: 'Case Studies', href: '/portfolio' },
+      { label: 'Consultation', href: '/contact' },
+      { label: 'Support', href: '/contact' },
+    ],
+    Legal: [
+      { label: 'Privacy Policy', href: '/' },
+      { label: 'Terms of Service', href: '/' },
+      { label: 'Cookie Policy', href: '/' },
+      { label: 'Disclaimer', href: '/' },
+    ],
   };
 
   const clientLogos = [
@@ -206,15 +223,16 @@ export function Footer() {
             <div key={index}>
               <h3 className="text-white font-bold mb-4">{title}</h3>
               <ul className="space-y-3">
-                {links.map((link, i) => (
-                  <li key={i}>
-                    <motion.a
-                      href="/"
-                      className="text-cyan-100/60 hover:text-cyan-400 transition-colors inline-block"
-                      whileHover={{ x: 5 }}
-                    >
-                      {link}
-                    </motion.a>
+                {links.map((link) => (
+                  <li key={`${title}-${link.label}`}>
+                    <motion.div whileHover={{ x: 5 }}>
+                      <Link
+                        to={link.href}
+                        className="text-cyan-100/60 hover:text-cyan-400 transition-colors inline-block"
+                      >
+                        {link.label}
+                      </Link>
+                    </motion.div>
                   </li>
                 ))}
               </ul>
