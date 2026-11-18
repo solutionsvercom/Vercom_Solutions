@@ -8,7 +8,6 @@ import {
   Sparkles,
   Target,
 } from 'lucide-react';
-import { useEffect } from 'react';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { getRelatedServices, getServiceBySlug } from '../data/services';
 
@@ -17,10 +16,6 @@ export function ServiceDetailPage() {
   const [searchParams] = useSearchParams();
   const effectiveSlug = slug || searchParams.get('slug') || '';
   const service = getServiceBySlug(effectiveSlug);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [effectiveSlug]);
 
   if (!service) {
     return <Navigate to="/services" replace />;

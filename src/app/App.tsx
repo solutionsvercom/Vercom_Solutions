@@ -8,6 +8,7 @@ import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { AIChatbot } from './components/AIChatbot';
+import { ScrollToTop } from './components/ScrollToTop';
 import { AboutPage } from './pages/AboutPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminLoginPage } from './pages/AdminLoginPage';
@@ -27,6 +28,7 @@ function AdminHomeRedirect() {
 function PublicSite() {
   return (
     <>
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />

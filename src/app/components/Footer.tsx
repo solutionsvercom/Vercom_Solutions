@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { servicesData } from '../data/services';
 import { BrandLogoBox } from './BrandLogoBox';
 import { apiUrl } from '../lib/apiBase';
 
@@ -126,12 +127,10 @@ export function Footer() {
 
   const footerLinks: Record<string, { label: string; href: string }[]> = {
     Services: [
-      { label: 'SaaS Development', href: '/services/saas-development' },
-      { label: 'CRM Solutions', href: '/services/crm-solutions' },
-      { label: 'ERP (Enterprise Resource Planning)', href: '/services/erp-enterprise-resource-planning' },
-      { label: 'Web Development', href: '/services/web-development' },
-      { label: 'Digital Marketing', href: '/services/digital-marketing' },
-      { label: 'Brand Advertisement & Luxury Promotion Shoots', href: '/services/brand-advertisement-luxury-promotion-shoots' },
+      ...servicesData.map((service) => ({
+        label: service.title,
+        href: `/services/${service.slug}`,
+      })),
       { label: 'View All Services', href: '/services' },
     ],
     Company: [
